@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #3b3f9f 0%, #4a2577 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .calculator {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #f0f0f0;
+            background: #f9f9f9;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .display {
+            background: linear-gradient(135deg, #3b3f9f 0%, #4a2577 100%);
+            color: white;
+            padding: 20px;
+            font-size: 2.5rem;
+            text-align: right;
+            word-wrap: break-word;
+            word-break: break-all;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .expression-display {
+            font-size: 1rem;
+            opacity: 0.7;
+            min-height: 25px;
+            margin-bottom: 5px;
+        }
+
+        .result-display {
+            font-size: 2.2rem;
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        button:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-operator {
+            background: linear-gradient(135deg, #3b3f9f 0%, #4a2577 100%);
+            color: white;
+        }
+
+        .btn-operator:hover {
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-equals {
+            background: linear-gradient(135deg, #c026d3 0%, #be123c 100%);
+            color: white;
+            grid-column: span 2;
+        }
+
+        .btn-equals:hover {
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-clear {
+            background: #b91c1c;
+            color: white;
+            grid-column: span 2;
+        }
+
+        .btn-clear:hover {
+            background: #991b1b;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-backspace {
+            background: #92400e;
+            color: white;
+        }
+
+        .btn-backspace:hover {
+            background: #78350f;
+        }
+
+        .memory-display {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+            color: #3730a3;
+        }
+
+        .memory-display i {
+            margin-right: 10px;
+        }
+
+        .memory-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .memory-buttons button {
+            background: #4338ca;
+            color: white;
+            padding: 12px;
+            font-size: 0.95rem;
+        }
+
+        .memory-buttons button:hover {
+            background: #3730a3;
+        }
+
+        .functions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .functions-grid button {
+            padding: 12px;
+            font-size: 0.9rem;
+            background: #e8f0fe;
+            color: #3730a3;
+            border: 2px solid #3730a3;
+        }
+
+        .functions-grid button:hover {
+            background: #4338ca;
+            color: white;
+        }
+
+        .separator {
+            height: 1px;
+            background: #f0f0f0;
+            margin: 15px 0;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9rem;
+            color: #999;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .history {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .history-item {
+            padding: 10px;
+            background: white;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .history-item:hover {
+            background: #f0f0f0;
+        }
+
+        .history-item-expression {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .history-item-result {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #667eea;
+            margin-top: 3px;
+        }
+
+        @media (max-width: 500px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .display {
+                font-size: 2rem;
+            }
+
+            .buttons-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+            }
+
+            button {
+                padding: 12px;
+                font-size: 1rem;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-calculator"></i> Scientific Calculator</h1>
+            <p>Built with Flask & JavaScript</p>
+        </div>
+
+        <div class="calculator">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="basic">Basic</button>
+                <button class="tab-btn" data-tab="scientific">Scientific</button>
+                <button class="tab-btn" data-tab="memory">Memory</button>
+                <button class="tab-btn" data-tab="history">History</button>
+            </div>
+
+            <!-- Basic Calculator Tab -->
+            <div id="basic" class="tab-content active">
+                <div class="display">
+                    <div>
+                        <div class="expression-display" id="expression-basic">0</div>
+                        <div class="result-display" id="result-basic">0</div>
+                    </div>
+                </div>
+
+                <div class="buttons-grid">
+                    <button class="btn-clear" onclick="clearDisplay('basic')">C</button>
+                    <button class="btn-backspace" onclick="backspace('basic')"><i class="fas fa-backspace"></i></button>
+                    <button class="btn-operator" onclick="appendOperator('basic', '/')">/</button>
+                    <button class="btn-operator" onclick="appendOperator('basic', '*')">×</button>
+
+                    <button onclick="appendNumber('basic', '7')">7</button>
+                    <button onclick="appendNumber('basic', '8')">8</button>
+                    <button onclick="appendNumber('basic', '9')">9</button>
+                    <button class="btn-operator" onclick="appendOperator('basic', '-')">-</button>
+
+                    <button onclick="appendNumber('basic', '4')">4</button>
+                    <button onclick="appendNumber('basic', '5')">5</button>
+                    <button onclick="appendNumber('basic', '6')">6</button>
+                    <button class="btn-operator" onclick="appendOperator('basic', '+')">+</button>
+
+                    <button onclick="appendNumber('basic', '1')">1</button>
+                    <button onclick="appendNumber('basic', '2')">2</button>
+                    <button onclick="appendNumber('basic', '3')">3</button>
+                    <button class="btn-operator" onclick="toggleSign('basic')">±</button>
+
+                    <button onclick="appendNumber('basic', '0')" style="grid-column: span 2;">0</button>
+                    <button onclick="appendNumber('basic', '.')">.</button>
+                    <button class="btn-equals" onclick="calculate('basic')">=</button>
+                </div>
+            </div>
+
+            <!-- Scientific Calculator Tab -->
+            <div id="scientific" class="tab-content">
+                <div class="display">
+                    <div>
+                        <div class="expression-display" id="expression-scientific">0</div>
+                        <div class="result-display" id="result-scientific">0</div>
+                    </div>
+                </div>
+
+                <div class="functions-grid">
+                    <button onclick="appendFunction('scientific', 'sin')">sin</button>
+                    <button onclick="appendFunction('scientific', 'cos')">cos</button>
+                    <button onclick="appendFunction('scientific', 'tan')">tan</button>
+                    <button onclick="appendFunction('scientific', 'sqrt')">√</button>
+                    <button onclick="appendFunction('scientific', 'log')">log</button>
+                    <button onclick="appendFunction('scientific', 'ln')">ln</button>
+                    <button onclick="appendFunction('scientific', 'pow')">x^y</button>
+                    <button onclick="appendFunction('scientific', 'factorial')">n!</button>
+                    <button onclick="appendConstant('scientific', 'pi')">π</button>
+                    <button onclick="appendConstant('scientific', 'e')">e</button>
+                    <button onclick="appendFunction('scientific', 'degrees')">deg</button>
+                    <button onclick="appendFunction('scientific', 'radians')">rad</button>
+                    <button onclick="appendParenthesis('scientific', '(')">(</button>
+                    <button onclick="appendParenthesis('scientific', ')')">)</button>
+                </div>
+
+                <div class="buttons-grid">
+                    <button class="btn-clear" onclick="clearDisplay('scientific')">C</button>
+                    <button class="btn-backspace" onclick="backspace('scientific')"><i class="fas fa-backspace"></i></button>
+                    <button class="btn-operator" onclick="appendOperator('scientific', '/')">/</button>
+                    <button class="btn-operator" onclick="appendOperator('scientific', '*')">×</button>
+
+                    <button onclick="appendNumber('scientific', '7')">7</button>
+                    <button onclick="appendNumber('scientific', '8')">8</button>
+                    <button onclick="appendNumber('scientific', '9')">9</button>
+                    <button class="btn-operator" onclick="appendOperator('scientific', '-')">-</button>
+
+                    <button onclick="appendNumber('scientific', '4')">4</button>
+                    <button onclick="appendNumber('scientific', '5')">5</button>
+                    <button onclick="appendNumber('scientific', '6')">6</button>
+                    <button class="btn-operator" onclick="appendOperator('scientific', '+')">+</button>
+
+                    <button onclick="appendNumber('scientific', '1')">1</button>
+                    <button onclick="appendNumber('scientific', '2')">2</button>
+                    <button onclick="appendNumber('scientific', '3')">3</button>
+                    <button class="btn-operator" onclick="toggleSign('scientific')">±</button>
+
+                    <button onclick="appendNumber('scientific', '0')" style="grid-column: span 2;">0</button>
+                    <button onclick="appendNumber('scientific', '.')">.</button>
+                    <button class="btn-equals" onclick="calculate('scientific')">=</button>
+                </div>
+            </div>
+
+            <!-- Memory Tab -->
+            <div id="memory" class="tab-content">
+                <div class="display">
+                    <div>
+                        <div class="expression-display" id="expression-memory">0</div>
+                        <div class="result-display" id="result-memory">0</div>
+                    </div>
+                </div>
+
+                <div class="memory-display" id="memory-value">
+                    <i class="fas fa-database"></i> Memory: 0
+                </div>
+
+                <div class="memory-buttons">
+                    <button onclick="memoryAdd('memory')">M+</button>
+                    <button onclick="memorySubtract('memory')">M-</button>
+                    <button onclick="memoryRecall('memory')">MR</button>
+                    <button onclick="memoryClear('memory')">MC</button>
+                </div>
+
+                <div class="separator"></div>
+
+                <div class="buttons-grid">
+                    <button class="btn-clear" onclick="clearDisplay('memory')">C</button>
+                    <button class="btn-backspace" onclick="backspace('memory')"><i class="fas fa-backspace"></i></button>
+                    <button class="btn-operator" onclick="appendOperator('memory', '/')">/</button>
+                    <button class="btn-operator" onclick="appendOperator('memory', '*')">×</button>
+
+                    <button onclick="appendNumber('memory', '7')">7</button>
+                    <button onclick="appendNumber('memory', '8')">8</button>
+                    <button onclick="appendNumber('memory', '9')">9</button>
+                    <button class="btn-operator" onclick="appendOperator('memory', '-')">-</button>
+
+                    <button onclick="appendNumber('memory', '4')">4</button>
+                    <button onclick="appendNumber('memory', '5')">5</button>
+                    <button onclick="appendNumber('memory', '6')">6</button>
+                    <button class="btn-operator" onclick="appendOperator('memory', '+')">+</button>
+
+                    <button onclick="appendNumber('memory', '1')">1</button>
+                    <button onclick="appendNumber('memory', '2')">2</button>
+                    <button onclick="appendNumber('memory', '3')">3</button>
+                    <button class="btn-operator" onclick="toggleSign('memory')">±</button>
+
+                    <button onclick="appendNumber('memory', '0')" style="grid-column: span 2;">0</button>
+                    <button onclick="appendNumber('memory', '.')">.</button>
+                    <button class="btn-equals" onclick="calculate('memory')">=</button>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="history" class="tab-content">
+                <div style="padding: 10px 0;">
+                    <button class="btn-clear" onclick="clearHistory()" style="width: 100%; margin-bottom: 15px;">
+                        <i class="fas fa-trash"></i> Clear History
+                    </button>
+                </div>
+                <div class="history" id="history-list">
+                    <p style="text-align: center; color: #999; padding: 30px 0;">
+                        <i class="fas fa-history"></i><br>No calculations yet
+                    </p>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>Created with <i class="fas fa-heart"></i> using Flask & JavaScript</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let expressions = {
+            basic: '0',
+            scientific: '0',
+            memory: '0'
+        };
+
+        let history = [];
+        let memoryValue = 0;
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab).classList.add('active');
+            });
+        });
+
+        function updateDisplay(tab) {
+            const exprDisplay = document.getElementById(`expression-${tab}`);
+            const resultDisplay = document.getElementById(`result-${tab}`);
+            
+            exprDisplay.textContent = expressions[tab];
+            resultDisplay.textContent = expressions[tab];
+        }
+
+        function appendNumber(tab, num) {
+            if (expressions[tab] === '0' && num !== '.') {
+                expressions[tab] = num;
+            } else if (!(expressions[tab].includes('.') && num === '.')) {
+                expressions[tab] += num;
+            }
+            updateDisplay(tab);
+        }
+
+        function appendOperator(tab, op) {
+            if (!expressions[tab].endsWith(' ')) {
+                expressions[tab] += ' ' + op + ' ';
+            }
+            updateDisplay(tab);
+        }
+
+        function appendFunction(tab, func) {
+            if (func === 'pow') {
+                expressions[tab] += ' ** ';
+            } else if (func === 'factorial') {
+                expressions[tab] = `factorial(${expressions[tab]})`;
+            } else {
+                // If expression is just '0', replace it; otherwise append
+                if (expressions[tab] === '0') {
+                    expressions[tab] = func + '(';
+                } else {
+                    expressions[tab] += func + '(';
+                }
+            }
+            updateDisplay(tab);
+        }
+
+        function appendConstant(tab, constant) {
+            if (constant === 'pi') {
+                // If expression is just '0', replace it; otherwise append
+                if (expressions[tab] === '0') {
+                    expressions[tab] = 'π';
+                } else {
+                    expressions[tab] += 'π';
+                }
+            } else if (constant === 'e') {
+                if (expressions[tab] === '0') {
+                    expressions[tab] = 'e';
+                } else {
+                    expressions[tab] += 'e';
+                }
+            }
+            updateDisplay(tab);
+        }
+
+        function appendParenthesis(tab, paren) {
+            if (expressions[tab] === '0' && paren === '(') {
+                expressions[tab] = paren;
+            } else {
+                expressions[tab] += paren;
+            }
+            updateDisplay(tab);
+        }
+
+        function toggleSign(tab) {
+            if (expressions[tab] !== '0') {
+                expressions[tab] = expressions[tab].startsWith('-') ? 
+                    expressions[tab].slice(1) : '-' + expressions[tab];
+            }
+            updateDisplay(tab);
+        }
+
+        function backspace(tab) {
+            expressions[tab] = expressions[tab].slice(0, -1);
+            if (expressions[tab] === '') expressions[tab] = '0';
+            updateDisplay(tab);
+        }
+
+        function clearDisplay(tab) {
+            expressions[tab] = '0';
+            updateDisplay(tab);
+        }
+
+        async function calculate(tab) {
+            try {
+                const response = await fetch('/calculate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ expression: expressions[tab] })
+                });
+                
+                const data = await response.json();
+                const result = data.result;
+                
+                // Add to history
+                history.unshift({ expression: expressions[tab], result: result });
+                if (history.length > 10) history.pop();
+                updateHistoryDisplay();
+                
+                expressions[tab] = String(result);
+                updateDisplay(tab);
+            } catch (error) {
+                console.error('Calculation error:', error);
+                expressions[tab] = 'Error';
+                updateDisplay(tab);
+            }
+        }
+
+        async function memoryAdd(tab) {
+            try {
+                const response = await fetch('/memory-add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ value: Number.parseFloat(expressions[tab]) })
+                });
+                
+                const data = await response.json();
+                memoryValue = data.memory;
+                updateMemoryDisplay();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function memorySubtract(tab) {
+            try {
+                const response = await fetch('/memory-subtract', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ value: Number.parseFloat(expressions[tab]) })
+                });
+                
+                const data = await response.json();
+                memoryValue = data.memory;
+                updateMemoryDisplay();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function memoryRecall(tab) {
+            try {
+                const response = await fetch('/memory-recall');
+                const data = await response.json();
+                expressions[tab] = String(data.memory);
+                updateDisplay(tab);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function memoryClear(tab) {
+            try {
+                const response = await fetch('/memory-clear', { method: 'POST' });
+                const data = await response.json();
+                memoryValue = data.memory;
+                updateMemoryDisplay();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function updateMemoryDisplay() {
+            document.getElementById('memory-value').textContent = 
+                `💾 Memory: ${memoryValue}`;
+        }
+
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('history-list');
+            
+            if (history.length === 0) {
+                historyList.innerHTML = '<p style="text-align: center; color: #999; padding: 30px 0;"><i class="fas fa-history"></i><br>No calculations yet</p>';
+                return;
+            }
+            
+            historyList.innerHTML = history.map(item => `
+                <div class="history-item" onclick="appendToDisplay('${item.expression}')">
+                    <div class="history-item-expression">${item.expression}</div>
+                    <div class="history-item-result">= ${item.result}</div>
+                </div>
+            `).join('');
+        }
+
+        function appendToDisplay(expr) {
+            const currentTab = document.querySelector('.tab-btn.active').dataset.tab;
+            expressions[currentTab] = expr;
+            updateDisplay(currentTab);
+        }
+
+        function clearHistory() {
+            history = [];
+            updateHistoryDisplay();
+        }
+
+        // Initialize
+        updateDisplay('basic');
+        updateDisplay('scientific');
+        updateDisplay('memory');
+    </script>
+</body>
+</html>
